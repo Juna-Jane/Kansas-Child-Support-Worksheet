@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Kansas Child Support Worksheet — a plain-language guided tool for calculating child support under Kansas law." />
+    <title>@ViewData["Title"] — Kansas Child Support Worksheet</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="/worksheet/step1" class="site-title">Kansas Child Support Worksheet</a>
+            <span class="header-subtitle">Based on Kansas Guidelines effective July 1, 2025</span>
+        </div>
+    </header>
+
+    <main class="site-main">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-inner">
+            <div class="disclaimer">
+                <strong>Legal Disclaimer:</strong> This tool is for informational purposes only and does not constitute legal advice.
+                Results represent the rebuttable presumptive amount under Kansas Child Support Guidelines (effective July 1, 2025)
+                and may be adjusted by a court. Always consult a licensed Kansas attorney if you have questions about your specific situation.
+            </div>
+            <div class="legal-aid">
+                <strong>Free legal help:</strong>
+                <a href="https://kansaslegalservices.org" target="_blank" rel="noopener">Kansas Legal Services</a>
+                — 1-800-723-6953
+                &nbsp;|&nbsp;
+                Kansas Bar Association Lawyer Referral: (785) 234-5696
+                &nbsp;|&nbsp;
+                <a href="https://kscourts.org/Kansas-Courts/Self-Help" target="_blank" rel="noopener">Kansas Courts Self-Help</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/js/wizard.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

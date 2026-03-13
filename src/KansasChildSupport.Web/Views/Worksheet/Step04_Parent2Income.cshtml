@@ -1,0 +1,44 @@
+@model KansasChildSupport.Web.Models.Steps.Step04_Parent2IncomeModel
+@{
+    ViewData["Title"] = "Step 4: Other Parent's Income";
+    ViewData["CurrentStep"] = 4;
+    string parentName = ViewBag.ParentName ?? "Party 2";
+    decimal minWage = ViewBag.MinWageSuggestion ?? 1254m;
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">The other parent's income (@parentName)</h1>
+
+    <div class="guidance-box">
+        <p>You'll need to enter the other parent's income as best you know it. If you're not sure, enter your best estimate — the court can require them to provide documentation.</p>
+        <p><strong>Note:</strong> Income from a new spouse or new partner does NOT count.</p>
+    </div>
+
+    <form method="post" action="/worksheet/step4" novalidate>
+        @Html.AntiForgeryToken()
+
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="IncomeUnknown" value="true" id="income-unknown-cb"
+                       class="checkbox-toggle" data-target="unknown-income-message"
+                       @(Model.IncomeUnknown ? "checked" : "") />
+                I don't know the other parent's income
+            </label>
+        </div>
+
+        <div id="unknown-income-message" class="@(Model.IncomeUnknown ? "" : "hidden") info-box">
+            <p>If you don't know, the court may estimate (or "impute") income based on what a full-time worker earns at minimum wage in Kansas:</p>
+            <p><strong>$7.25/hr × 40 hrs × 4.33 weeks = approximately $@minWage.ToString("N0")/month</strong></p>
+            <p>You can use that as a starting estimate, or leave the income at $0 and tell the court you need income information from the other parent.</p>
+        </div>
+
+        @await Html.PartialAsync("_IncomeFields", (KansasChildSupport.Web.Models.Steps.ParentIncomeModel)Model)
+
+        <div class="button-row">
+            <a href="/worksheet/step3" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Next: Parenting Time &rarr;</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,320 @@
+@model KansasChildSupport.Web.Models.Steps.ParentIncomeModel
+
+<div class="income-section">
+    <!-- Section A: Employment -->
+    <h2 class="section-heading">Section A — Job or Employment Income</h2>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">Do you have a job or receive wages?</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="HasEmploymentIncome" value="true" class="toggle-radio"
+                       data-target="employment-fields" @(Model.HasEmploymentIncome ? "checked" : "") />
+                <span>Yes</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="HasEmploymentIncome" value="false" class="toggle-radio"
+                       data-target="employment-fields" @(!Model.HasEmploymentIncome ? "checked" : "") />
+                <span>No</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="employment-fields" class="@(Model.HasEmploymentIncome ? "" : "hidden")">
+        <div class="form-group">
+            <label for="MonthlyGrossEmployment">Monthly Gross Income from Employment <span class="required-label">*</span></label>
+            <div class="help-text">
+                Gross income means the amount <strong>BEFORE</strong> taxes are taken out. Look at your pay stub — this is the "gross pay" line.
+                Include wages, salary, tips, commissions, overtime, and bonuses.<br />
+                <strong>Tip:</strong> If you're paid weekly, multiply your weekly gross by 4.33. If paid every two weeks, multiply by 2.17.
+            </div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" id="MonthlyGrossEmployment" name="MonthlyGrossEmployment" class="form-control income-field"
+                       value="@(Model.MonthlyGrossEmployment > 0 ? Model.MonthlyGrossEmployment.ToString() : "")"
+                       min="0" step="1" placeholder="0" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Does your employer offer a cafeteria plan (pre-tax benefits)?</label>
+            <div class="help-text">
+                Cafeteria plans include health insurance deducted from your paycheck before taxes, flexible spending accounts (FSA), or dependent care accounts.
+                Even though these come out before taxes, Kansas law says we still count the full gross amount — so no adjustment needed here. Just enter your total gross wages above.
+                <details>
+                    <summary>Why do we need this?</summary>
+                    <p>Kansas law (per the Cafeteria Plans supplement) says salary reduction agreements don't reduce gross income for child support purposes. Your income is the full amount before any payroll deductions.</p>
+                </details>
+            </div>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="HasCafeteriaPlan" value="true" @(Model.HasCafeteriaPlan ? "checked" : "") /> Yes
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="HasCafeteriaPlan" value="false" @(!Model.HasCafeteriaPlan ? "checked" : "") /> No
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section B: Self-Employment -->
+    <h2 class="section-heading">Section B — Self-Employment Income</h2>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">Are you self-employed, own a business, or do freelance/gig work?</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="IsSelfEmployed" value="true" class="toggle-radio"
+                       data-target="selfemployment-fields" @(Model.IsSelfEmployed ? "checked" : "") />
+                <span>Yes</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="IsSelfEmployed" value="false" class="toggle-radio"
+                       data-target="selfemployment-fields" @(!Model.IsSelfEmployed ? "checked" : "") />
+                <span>No</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="selfemployment-fields" class="@(Model.IsSelfEmployed ? "" : "hidden")">
+        <div class="form-group">
+            <label for="MonthlyGrossSelfEmployment">Monthly Gross Income from Self-Employment</label>
+            <div class="help-text">This is your total business revenue before expenses.</div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" id="MonthlyGrossSelfEmployment" name="MonthlyGrossSelfEmployment" class="form-control income-field"
+                       value="@(Model.MonthlyGrossSelfEmployment > 0 ? Model.MonthlyGrossSelfEmployment.ToString() : "")"
+                       min="0" step="1" placeholder="0" />
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="MonthlyBusinessExpenses">Monthly Reasonable Business Expenses</label>
+            <div class="help-text">
+                These are expenses that are truly necessary to run your business — like supplies, equipment, or business insurance.
+                Do NOT include personal expenses, your home mortgage, or the QBI deduction.
+                <strong>Note:</strong> You may include the extra self-employment tax you pay (the additional 7.65% above regular FICA) as a business expense.
+            </div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" id="MonthlyBusinessExpenses" name="MonthlyBusinessExpenses" class="form-control income-field"
+                       value="@(Model.MonthlyBusinessExpenses > 0 ? Model.MonthlyBusinessExpenses.ToString() : "")"
+                       min="0" step="1" placeholder="0" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Section C: Other Income -->
+    <h2 class="section-heading">Section C — Other Income Sources</h2>
+    <div class="help-text">Check all that apply and enter monthly amounts.</div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasBonusIncome" value="true" class="checkbox-toggle"
+                   data-target="bonus-fields" @(Model.HasBonusIncome ? "checked" : "") />
+            Bonuses or commissions (irregular)
+        </label>
+        <div id="bonus-fields" class="@(Model.HasBonusIncome ? "" : "hidden")">
+            <div class="help-text">If you get bonuses sometimes but not every month, add up the last 12 months of bonuses and divide by 12.</div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyBonusAverage" class="form-control income-field"
+                       value="@(Model.MonthlyBonusAverage > 0 ? Model.MonthlyBonusAverage.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly average" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasMilitaryPay" value="true" class="checkbox-toggle"
+                   data-target="military-fields" @(Model.HasMilitaryPay ? "checked" : "") />
+            Military pay (Basic Pay + BAH + BAS + other allowances)
+        </label>
+        <div id="military-fields" class="@(Model.HasMilitaryPay ? "" : "hidden")">
+            <div class="help-text">
+                Include ALL military income: Basic Pay, Basic Allowance for Housing (BAH), Basic Allowance for Subsistence (BAS), and any special pays. These all count under Kansas law.
+            </div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyMilitaryPay" class="form-control income-field"
+                       value="@(Model.MonthlyMilitaryPay > 0 ? Model.MonthlyMilitaryPay.ToString() : "")"
+                       min="0" step="1" placeholder="Total monthly military income" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasDisabilityPayments" value="true" class="checkbox-toggle"
+                   data-target="disability-fields" @(Model.HasDisabilityPayments ? "checked" : "") />
+            Disability payments (SSDI, VA Disability, Workers Comp)
+        </label>
+        <div id="disability-fields" class="@(Model.HasDisabilityPayments ? "" : "hidden")">
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyDisabilityPayments" class="form-control income-field"
+                       value="@(Model.MonthlyDisabilityPayments > 0 ? Model.MonthlyDisabilityPayments.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly total" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasUnemploymentCompensation" value="true" class="checkbox-toggle"
+                   data-target="unemployment-fields" @(Model.HasUnemploymentCompensation ? "checked" : "") />
+            Unemployment compensation
+        </label>
+        <div id="unemployment-fields" class="@(Model.HasUnemploymentCompensation ? "" : "hidden")">
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyUnemploymentCompensation" class="form-control income-field"
+                       value="@(Model.MonthlyUnemploymentCompensation > 0 ? Model.MonthlyUnemploymentCompensation.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly total" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasRetirementIncome" value="true" class="checkbox-toggle"
+                   data-target="retirement-fields" @(Model.HasRetirementIncome ? "checked" : "") />
+            Retirement or pension distributions
+        </label>
+        <div id="retirement-fields" class="@(Model.HasRetirementIncome ? "" : "hidden")">
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyRetirementIncome" class="form-control income-field"
+                       value="@(Model.MonthlyRetirementIncome > 0 ? Model.MonthlyRetirementIncome.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly total" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">
+            <input type="checkbox" name="HasOtherIncome" value="true" class="checkbox-toggle"
+                   data-target="other-income-fields" @(Model.HasOtherIncome ? "checked" : "") />
+            Other income (describe)
+        </label>
+        <div id="other-income-fields" class="@(Model.HasOtherIncome ? "" : "hidden")">
+            <input type="text" name="OtherIncomeDescription" class="form-control" placeholder="Describe the income source"
+                   value="@Model.OtherIncomeDescription" />
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyOtherIncome" class="form-control income-field"
+                       value="@(Model.MonthlyOtherIncome > 0 ? Model.MonthlyOtherIncome.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly total" />
+            </div>
+        </div>
+    </div>
+
+    <!-- Section C Adjustments (Deductions) -->
+    <h2 class="section-heading">Section C — Adjustments (Deductions)</h2>
+    <div class="help-text">These reduce your income for child support purposes.</div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">Do you pay child support for OTHER children (not in this case) under a court order?</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="PaysChildSupportOtherCases" value="true" class="toggle-radio"
+                       data-target="other-cs-fields" @(Model.PaysChildSupportOtherCases ? "checked" : "") /> Yes
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="PaysChildSupportOtherCases" value="false" class="toggle-radio"
+                       data-target="other-cs-fields" @(!Model.PaysChildSupportOtherCases ? "checked" : "") /> No
+            </label>
+        </div>
+        <div id="other-cs-fields" class="@(Model.PaysChildSupportOtherCases ? "" : "hidden")">
+            <div class="help-text">Only enter this if there is an actual court order AND you are actually paying it. Do not include past-due amounts (arrears).</div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyChildSupportPaidOtherCases" class="form-control income-field"
+                       value="@(Model.MonthlyChildSupportPaidOtherCases > 0 ? Model.MonthlyChildSupportPaidOtherCases.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly amount you actually pay" />
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">Do you pay spousal maintenance (alimony) to someone under a court order?</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="PaysMaintenancePaid" value="true" class="toggle-radio"
+                       data-target="maintenance-paid-fields" @(Model.PaysMaintenancePaid ? "checked" : "") /> Yes
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="PaysMaintenancePaid" value="false" class="toggle-radio"
+                       data-target="maintenance-paid-fields" @(!Model.PaysMaintenancePaid ? "checked" : "") /> No
+            </label>
+        </div>
+        <div id="maintenance-paid-fields" class="@(Model.PaysMaintenancePaid ? "" : "hidden")">
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyMaintenancePaid" class="form-control income-field"
+                       value="@(Model.MonthlyMaintenancePaid > 0 ? Model.MonthlyMaintenancePaid.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly amount" />
+            </div>
+            <div class="form-group">
+                <label>When was this maintenance order signed?</label>
+                <div class="help-text">If your order is dated after December 31, 2018, the tax law changed how this is calculated. We'll handle that automatically (we multiply by 1.25 to account for the lost tax deduction).</div>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="MaintenancePaidPreDecember2018" value="true"
+                               @(Model.MaintenancePaidPreDecember2018 ? "checked" : "") />
+                        On or before December 31, 2018
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="MaintenancePaidPreDecember2018" value="false"
+                               @(!Model.MaintenancePaidPreDecember2018 ? "checked" : "") />
+                        After December 31, 2018
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group toggle-group">
+        <label class="toggle-label">Do you RECEIVE spousal maintenance (alimony) from someone under a court order?</label>
+        <div class="radio-group">
+            <label class="radio-label">
+                <input type="radio" name="ReceivesMaintenance" value="true" class="toggle-radio"
+                       data-target="maintenance-received-fields" @(Model.ReceivesMaintenance ? "checked" : "") /> Yes
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="ReceivesMaintenance" value="false" class="toggle-radio"
+                       data-target="maintenance-received-fields" @(!Model.ReceivesMaintenance ? "checked" : "") /> No
+            </label>
+        </div>
+        <div id="maintenance-received-fields" class="@(Model.ReceivesMaintenance ? "" : "hidden")">
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyMaintenanceReceived" class="form-control income-field"
+                       value="@(Model.MonthlyMaintenanceReceived > 0 ? Model.MonthlyMaintenanceReceived.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly amount" />
+            </div>
+            <div class="form-group">
+                <label>When was this maintenance order signed?</label>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="MaintenanceReceivedPreDecember2018" value="true"
+                               @(Model.MaintenanceReceivedPreDecember2018 ? "checked" : "") />
+                        On or before December 31, 2018
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="MaintenanceReceivedPreDecember2018" value="false"
+                               @(!Model.MaintenanceReceivedPreDecember2018 ? "checked" : "") />
+                        After December 31, 2018
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Running total estimate -->
+    <div class="running-total" aria-live="polite">
+        <strong>Your Child Support Income (working estimate):</strong>
+        <span id="income-estimate" class="income-total">$0/month</span>
+        <br/><small>This is a rough estimate based on what you've entered so far. The final calculation will be more precise.</small>
+    </div>
+</div>

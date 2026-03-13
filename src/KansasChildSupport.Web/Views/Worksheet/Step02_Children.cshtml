@@ -1,0 +1,154 @@
+@model KansasChildSupport.Web.Models.Steps.Step02_ChildrenModel
+@{
+    ViewData["Title"] = "Step 2: Children";
+    ViewData["CurrentStep"] = 2;
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Tell us about your children</h1>
+
+    <div class="guidance-box">
+        <p>Only include the children this support order is for. Do not include stepchildren or children from other relationships.</p>
+        <p>Age matters because Kansas law uses three age groups to calculate support: ages 0–5, 6–11, and 12–18. Older children typically cost more to raise.</p>
+    </div>
+
+    <form method="post" action="/worksheet/step2" novalidate>
+        @Html.AntiForgeryToken()
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary" role="alert">
+                <strong>Please fix the following:</strong>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        if (!string.IsNullOrEmpty(error.ErrorMessage))
+                        {
+                            <li>@error.ErrorMessage</li>
+                        }
+                    }
+                </ul>
+            </div>
+        }
+
+        <div id="children-container">
+            @for (int i = 0; i < Model.Children.Count; i++)
+            {
+                var child = Model.Children[i];
+                <div class="child-entry card" data-index="@i">
+                    <div class="card-header">
+                        <span class="child-number">Child @(i + 1)</span>
+                        @if (i > 0)
+                        {
+                            <button type="button" class="btn btn-link btn-remove-child" onclick="removeChild(this)" aria-label="Remove child @(i+1)">Remove</button>
+                        }
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="Children_@(i)__FirstName">First Name <span class="required-label" aria-label="required">*</span></label>
+                            <input type="text" id="Children_@(i)__FirstName" name="Children[@i].FirstName"
+                                   class="form-control" value="@child.FirstName" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="Children_@(i)__DateOfBirth">Date of Birth <span class="required-label" aria-label="required">*</span></label>
+                            <input type="date" id="Children_@(i)__DateOfBirth" name="Children[@i].DateOfBirth"
+                                   class="form-control child-dob"
+                                   value="@(child.DateOfBirth.HasValue ? child.DateOfBirth.Value.ToString("yyyy-MM-dd") : "")"
+                                   onchange="updateAgeDisplay(this, @i)" required />
+                            <div class="age-display" id="age-display-@i">
+                                @if (child.DateOfBirth.HasValue)
+                                {
+                                    <span class="age-badge">Age @child.GetAge() — Group: @child.GetAgeGroup()</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div id="child-template" style="display:none" aria-hidden="true">
+            <div class="child-entry card" data-index="__INDEX__">
+                <div class="card-header">
+                    <span class="child-number">Child __NUM__</span>
+                    <button type="button" class="btn btn-link btn-remove-child" onclick="removeChild(this)" aria-label="Remove child">Remove</button>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>First Name <span class="required-label">*</span></label>
+                        <input type="text" name="Children[__INDEX__].FirstName" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Date of Birth <span class="required-label">*</span></label>
+                        <input type="date" name="Children[__INDEX__].DateOfBirth" class="form-control child-dob"
+                               onchange="updateAgeDisplay(this, '__INDEX__')" required />
+                        <div class="age-display" id="age-display-__INDEX__"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="add-child-row">
+            <button type="button" id="add-child-btn" class="btn btn-secondary" onclick="addChild()"
+                    @(Model.Children.Count >= 6 ? "disabled" : "")>
+                + Add Another Child
+            </button>
+            <span class="hint-text">You can add up to 6 children.</span>
+        </div>
+
+        <div class="button-row">
+            <a href="/worksheet/step1" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Next: Your Income &rarr;</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+var childCount = @Model.Children.Count;
+
+function addChild() {
+    if (childCount >= 6) return;
+    var template = document.getElementById('child-template').innerHTML;
+    var newIndex = childCount;
+    var newNum = childCount + 1;
+    template = template.replace(/__INDEX__/g, newIndex).replace(/__NUM__/g, newNum);
+    var container = document.getElementById('children-container');
+    var div = document.createElement('div');
+    div.innerHTML = template;
+    container.appendChild(div.firstElementChild);
+    childCount++;
+    if (childCount >= 6) document.getElementById('add-child-btn').disabled = true;
+}
+
+function removeChild(btn) {
+    var entry = btn.closest('.child-entry');
+    entry.remove();
+    childCount--;
+    document.getElementById('add-child-btn').disabled = false;
+    // Re-number remaining children
+    var entries = document.querySelectorAll('.child-entry');
+    entries.forEach(function(el, i) {
+        el.querySelector('.child-number').textContent = 'Child ' + (i + 1);
+        // Update input names
+        el.querySelectorAll('[name]').forEach(function(input) {
+            input.name = input.name.replace(/Children\[\d+\]/, 'Children[' + i + ']');
+        });
+    });
+}
+
+function updateAgeDisplay(input, index) {
+    var dob = new Date(input.value);
+    if (isNaN(dob.getTime())) return;
+    var today = new Date();
+    var age = today.getFullYear() - dob.getFullYear();
+    var m = today.getMonth() - dob.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+    var group = age <= 5 ? '0–5' : age <= 11 ? '6–11' : '12–18';
+    var display = document.getElementById('age-display-' + index);
+    if (display) display.innerHTML = '<span class="age-badge">Age ' + age + ' — Group: ' + group + '</span>';
+}
+</script>
+}

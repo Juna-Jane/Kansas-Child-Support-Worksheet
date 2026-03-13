@@ -1,0 +1,40 @@
+@{
+    int currentStep = ViewData["CurrentStep"] as int? ?? 1;
+    var steps = new[]
+    {
+        "Case Info",
+        "Children",
+        "Your Income",
+        "Other Parent",
+        "Parenting Time",
+        "Insurance & Care",
+        "Adjustments",
+        "Review"
+    };
+}
+<nav class="step-progress" aria-label="Worksheet progress">
+    <ol class="step-list">
+        @for (int i = 0; i < steps.Length; i++)
+        {
+            var stepNum = i + 1;
+            string cssClass = stepNum == currentStep ? "step-current" :
+                              stepNum < currentStep ? "step-done" : "step-future";
+            <li class="step-item @cssClass">
+                <span class="step-indicator" aria-hidden="true">
+                    @if (stepNum < currentStep)
+                    {
+                        <span>&#10003;</span>
+                    }
+                    else
+                    {
+                        @stepNum
+                    }
+                </span>
+                <span class="step-label">@steps[i]</span>
+            </li>
+        }
+    </ol>
+    <div class="step-progress-bar">
+        <div class="step-progress-fill" style="width: @(((currentStep - 1) * 100 / (steps.Length - 1)))%"></div>
+    </div>
+</nav>

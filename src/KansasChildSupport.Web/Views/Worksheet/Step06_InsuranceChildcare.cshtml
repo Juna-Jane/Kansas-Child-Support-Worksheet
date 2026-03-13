@@ -1,0 +1,175 @@
+@model KansasChildSupport.Web.Models.Steps.Step06_InsuranceChildcareModel
+@{
+    ViewData["Title"] = "Step 6: Insurance & Child Care";
+    ViewData["CurrentStep"] = 6;
+    string p1Name = ViewBag.P1Name ?? "Party 1";
+    string p2Name = ViewBag.P2Name ?? "Party 2";
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Health insurance and child care</h1>
+
+    <form method="post" action="/worksheet/step6" novalidate>
+        @Html.AntiForgeryToken()
+
+        <!-- Section F: Health Insurance -->
+        <h2 class="section-heading">Section F — Health Insurance</h2>
+        <div class="help-text">We need to know if either parent pays for the children's health, dental, or vision insurance.</div>
+
+        <div class="two-col-grid">
+            <!-- P1 Insurance -->
+            <div class="col-card">
+                <h3>@p1Name</h3>
+                <div class="form-group">
+                    <label>Does @p1Name pay for the children's health, dental, or vision insurance?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="Parent1PaysInsurance" value="true" class="toggle-radio"
+                                   data-target="p1-insurance-fields" @(Model.Parent1PaysInsurance ? "checked" : "") /> Yes
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="Parent1PaysInsurance" value="false" class="toggle-radio"
+                                   data-target="p1-insurance-fields" @(!Model.Parent1PaysInsurance ? "checked" : "") /> No
+                        </label>
+                    </div>
+                </div>
+                <div id="p1-insurance-fields" class="@(Model.Parent1PaysInsurance ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="Parent1MonthlyInsurancePremium">Monthly Premium for Children Only</label>
+                        <div class="help-text">
+                            This is NOT your total premium. It's the portion that covers the children only.
+                            <strong>How to calculate:</strong> What would the employee-only plan cost? Subtract that from the employee + children plan cost. That difference is the children's share.
+                        </div>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent1MonthlyInsurancePremium" name="Parent1MonthlyInsurancePremium" class="form-control"
+                                   value="@(Model.Parent1MonthlyInsurancePremium > 0 ? Model.Parent1MonthlyInsurancePremium.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- P2 Insurance -->
+            <div class="col-card">
+                <h3>@p2Name</h3>
+                <div class="form-group">
+                    <label>Does @p2Name pay for the children's health, dental, or vision insurance?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="Parent2PaysInsurance" value="true" class="toggle-radio"
+                                   data-target="p2-insurance-fields" @(Model.Parent2PaysInsurance ? "checked" : "") /> Yes
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="Parent2PaysInsurance" value="false" class="toggle-radio"
+                                   data-target="p2-insurance-fields" @(!Model.Parent2PaysInsurance ? "checked" : "") /> No
+                        </label>
+                    </div>
+                </div>
+                <div id="p2-insurance-fields" class="@(Model.Parent2PaysInsurance ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="Parent2MonthlyInsurancePremium">Monthly Premium for Children Only</label>
+                        <div class="help-text">Same calculation: employee + children plan minus employee-only plan = children's share.</div>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent2MonthlyInsurancePremium" name="Parent2MonthlyInsurancePremium" class="form-control"
+                                   value="@(Model.Parent2MonthlyInsurancePremium > 0 ? Model.Parent2MonthlyInsurancePremium.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section G: Child Care -->
+        <h2 class="section-heading">Section G — Work-Related Child Care</h2>
+        <div class="help-text">Kansas law reduces child care costs by the child care tax credit you may be eligible for. We'll calculate this automatically.</div>
+
+        <div class="two-col-grid">
+            <!-- P1 Child Care -->
+            <div class="col-card">
+                <h3>@p1Name</h3>
+                <div class="form-group">
+                    <label>Does @p1Name pay for child care (daycare, after-school, summer) in order to work or look for work?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="Parent1PaysChildCare" value="true" class="toggle-radio"
+                                   data-target="p1-childcare-fields" @(Model.Parent1PaysChildCare ? "checked" : "") /> Yes
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="Parent1PaysChildCare" value="false" class="toggle-radio"
+                                   data-target="p1-childcare-fields" @(!Model.Parent1PaysChildCare ? "checked" : "") /> No
+                        </label>
+                    </div>
+                </div>
+                <div id="p1-childcare-fields" class="@(Model.Parent1PaysChildCare ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="Parent1MonthlyChildCare">Average Monthly Child Care Cost</label>
+                        <div class="help-text">Include daycare, after-school, and summer care. Do NOT include care paid when you're not working. Divide annual cost by 12 to get monthly average.</div>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent1MonthlyChildCare" name="Parent1MonthlyChildCare" class="form-control"
+                                   value="@(Model.Parent1MonthlyChildCare > 0 ? Model.Parent1MonthlyChildCare.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Parent1AnnualGrossIncomeForChildCare">@p1Name's Annual Gross Income</label>
+                        <div class="help-text">Kansas law requires us to subtract the child care tax credit you could get. We need your annual income to look up that credit amount.</div>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent1AnnualGrossIncomeForChildCare" name="Parent1AnnualGrossIncomeForChildCare" class="form-control"
+                                   value="@(Model.Parent1AnnualGrossIncomeForChildCare > 0 ? Model.Parent1AnnualGrossIncomeForChildCare.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- P2 Child Care -->
+            <div class="col-card">
+                <h3>@p2Name</h3>
+                <div class="form-group">
+                    <label>Does @p2Name pay for child care in order to work or look for work?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="Parent2PaysChildCare" value="true" class="toggle-radio"
+                                   data-target="p2-childcare-fields" @(Model.Parent2PaysChildCare ? "checked" : "") /> Yes
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="Parent2PaysChildCare" value="false" class="toggle-radio"
+                                   data-target="p2-childcare-fields" @(!Model.Parent2PaysChildCare ? "checked" : "") /> No
+                        </label>
+                    </div>
+                </div>
+                <div id="p2-childcare-fields" class="@(Model.Parent2PaysChildCare ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="Parent2MonthlyChildCare">Average Monthly Child Care Cost</label>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent2MonthlyChildCare" name="Parent2MonthlyChildCare" class="form-control"
+                                   value="@(Model.Parent2MonthlyChildCare > 0 ? Model.Parent2MonthlyChildCare.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="Parent2AnnualGrossIncomeForChildCare">@p2Name's Annual Gross Income</label>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="Parent2AnnualGrossIncomeForChildCare" name="Parent2AnnualGrossIncomeForChildCare" class="form-control"
+                                   value="@(Model.Parent2AnnualGrossIncomeForChildCare > 0 ? Model.Parent2AnnualGrossIncomeForChildCare.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <a href="/worksheet/step5" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Next: Special Circumstances &rarr;</button>
+        </div>
+    </form>
+</div>
