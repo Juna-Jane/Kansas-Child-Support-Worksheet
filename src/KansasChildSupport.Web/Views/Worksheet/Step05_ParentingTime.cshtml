@@ -1,0 +1,198 @@
+@model KansasChildSupport.Web.Models.Steps.Step05_ParentingTimeModel
+@{
+    ViewData["Title"] = "Step 5: Parenting Time";
+    ViewData["CurrentStep"] = 5;
+    string primaryName = ViewBag.PrimaryName ?? "primary parent";
+    string nonPrimaryName = ViewBag.NonPrimaryName ?? "non-primary parent";
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Time with the children</h1>
+
+    <div class="guidance-box">
+        <p>Kansas law may reduce the non-primary parent's child support if they spend a significant amount of time with the children. Answer these questions about how much time the children spend with each parent.</p>
+        <p>The <strong>non-primary parent</strong> in your case is: <strong>@nonPrimaryName</strong></p>
+    </div>
+
+    <form method="post" action="/worksheet/step5" novalidate>
+        @Html.AntiForgeryToken()
+
+        <!-- 50/50 equal time -->
+        <div class="form-group">
+            <fieldset>
+                <legend>Do the children spend exactly equal time (50/50) with both parents?</legend>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="IsEqualParentingTime" value="true" id="equal-yes"
+                               @(Model.IsEqualParentingTime ? "checked" : "") />
+                        <span>Yes, it's a true 50/50 split</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="IsEqualParentingTime" value="false" id="equal-no"
+                               @(!Model.IsEqualParentingTime ? "checked" : "") />
+                        <span>No, one parent has them most of the time</span>
+                    </label>
+                </div>
+            </fieldset>
+        </div>
+
+        <div id="equal-time-info" class="@(Model.IsEqualParentingTime ? "" : "hidden") info-box">
+            <p><strong>50/50 Equal Parenting Time:</strong> Kansas law uses the Direct Expense Formula for equal parenting time. This calculates the difference between what each parent would pay and splits it. This is simpler than the cooperative Shared Expense Formula.</p>
+            <p>We'll automatically apply this when calculating your result.</p>
+        </div>
+
+        <div id="non-equal-section" class="@(Model.IsEqualParentingTime ? "hidden" : "")">
+            <!-- 35% question -->
+            <div class="form-group">
+                <fieldset>
+                    <legend>Does <strong>@nonPrimaryName</strong> have the children for 35% or more of the time?</legend>
+                    <div class="help-text">
+                        35% of the year = about 128 days, or roughly every other weekend plus one evening per week plus half of all school breaks.
+                        Time at school or daycare does NOT count toward this percentage.
+                    </div>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="NonPrimaryTimePercent" value="Yes" id="time-yes"
+                                   @(Model.NonPrimaryTimePercent == "Yes" ? "checked" : "") />
+                            <span>Yes, they have 35% or more</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="NonPrimaryTimePercent" value="No" id="time-no"
+                                   @(Model.NonPrimaryTimePercent == "No" ? "checked" : "") />
+                            <span>No, they have less than 35%</span>
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="NonPrimaryTimePercent" value="NotSure" id="time-notsure"
+                                   @(Model.NonPrimaryTimePercent == "NotSure" ? "checked" : "") />
+                            <span>Not sure</span>
+                        </label>
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Adjustment type (shown only if Yes) -->
+            <div id="adjustment-type-section" class="@(Model.NonPrimaryTimePercent == "Yes" ? "" : "hidden")">
+                <div class="form-group">
+                    <fieldset>
+                        <legend>Which type of adjustment applies?</legend>
+                        <div class="radio-group">
+                            <label class="radio-label">
+                                <input type="radio" name="AdjustmentType" value="Percentage"
+                                       class="toggle-radio" data-target="pct-fields"
+                                       @(Model.AdjustmentType == "Percentage" ? "checked" : "") />
+                                <span>I know roughly what percent of time the children are with @nonPrimaryName</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="AdjustmentType" value="ActualCost"
+                                       class="toggle-radio" data-target="actual-cost-fields"
+                                       @(Model.AdjustmentType == "ActualCost" ? "checked" : "") />
+                                <span>I want to enter the actual dollar amount of extra costs @nonPrimaryName incurs</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="AdjustmentType" value="ExtendedTime"
+                                       class="toggle-radio" data-target="extended-fields"
+                                       @(Model.AdjustmentType == "ExtendedTime" ? "checked" : "") />
+                                <span>@nonPrimaryName has the children for 14 or more days in a row (e.g., summer)</span>
+                            </label>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <!-- Percentage method -->
+                <div id="pct-fields" class="@(Model.AdjustmentType == "Percentage" ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="PercentageOfTime">Percentage of Time with @nonPrimaryName (35–49%)</label>
+                        <div class="help-text">
+                            <strong>Reduction table:</strong>
+                            35–39% = 10% reduction &bull; 40–44% = 20% reduction &bull; 45–49% = 30% reduction
+                        </div>
+                        <div class="input-prefix-wrap">
+                            <input type="number" id="PercentageOfTime" name="PercentageOfTime" class="form-control"
+                                   value="@(Model.PercentageOfTime > 0 ? Model.PercentageOfTime.ToString() : "")"
+                                   min="35" max="49" step="1" placeholder="35-49" />
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actual cost method -->
+                <div id="actual-cost-fields" class="@(Model.AdjustmentType == "ActualCost" ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="ActualExtraCosts">Monthly Dollar Amount of Extra Costs</label>
+                        <div class="input-prefix-wrap">
+                            <span class="input-prefix">$</span>
+                            <input type="number" id="ActualExtraCosts" name="ActualExtraCosts" class="form-control"
+                                   value="@(Model.ActualExtraCosts > 0 ? Model.ActualExtraCosts.ToString() : "")"
+                                   min="0" step="1" placeholder="0" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extended time method -->
+                <div id="extended-fields" class="@(Model.AdjustmentType == "ExtendedTime" ? "" : "hidden")">
+                    <div class="form-group">
+                        <label for="ExtendedTimeReductionPercent">Reduction Percentage (up to 50%)</label>
+                        <div class="input-prefix-wrap">
+                            <input type="number" id="ExtendedTimeReductionPercent" name="ExtendedTimeReductionPercent" class="form-control"
+                                   value="@(Model.ExtendedTimeReductionPercent > 0 ? Model.ExtendedTimeReductionPercent.ToString() : "")"
+                                   min="0" max="50" step="1" placeholder="0-50" />
+                            <span class="input-suffix">%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Long-distance costs -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">Does one parent pay significant travel costs for parenting time because you live far apart?</label>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="HasLongDistanceCosts" value="true" class="toggle-radio"
+                           data-target="longdistance-fields" @(Model.HasLongDistanceCosts ? "checked" : "") /> Yes
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="HasLongDistanceCosts" value="false" class="toggle-radio"
+                           data-target="longdistance-fields" @(!Model.HasLongDistanceCosts ? "checked" : "") /> No
+                </label>
+            </div>
+        </div>
+        <div id="longdistance-fields" class="@(Model.HasLongDistanceCosts ? "" : "hidden")">
+            <div class="help-text">Divide your total estimated annual travel cost by 12, then by 2. Enter that monthly amount.</div>
+            <div class="input-prefix-wrap">
+                <span class="input-prefix">$</span>
+                <input type="number" name="MonthlyLongDistanceCosts" class="form-control"
+                       value="@(Model.MonthlyLongDistanceCosts > 0 ? Model.MonthlyLongDistanceCosts.ToString() : "")"
+                       min="0" step="1" placeholder="Monthly cost" />
+            </div>
+        </div>
+
+        <div class="button-row">
+            <a href="/worksheet/step4" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Next: Insurance &amp; Child Care &rarr;</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+<script>
+// Show/hide non-equal section and equal info based on equal time radio
+document.querySelectorAll('input[name="IsEqualParentingTime"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+        var isEqual = this.value === 'true';
+        document.getElementById('equal-time-info').classList.toggle('hidden', !isEqual);
+        document.getElementById('non-equal-section').classList.toggle('hidden', isEqual);
+    });
+});
+
+// Show/hide adjustment type section based on 35% question
+document.querySelectorAll('input[name="NonPrimaryTimePercent"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+        var show = this.value === 'Yes';
+        document.getElementById('adjustment-type-section').classList.toggle('hidden', !show);
+    });
+});
+</script>
+}

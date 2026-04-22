@@ -1,0 +1,169 @@
+@model KansasChildSupport.Web.Models.Steps.Step07_AdjustmentsModel
+@{
+    ViewData["Title"] = "Step 7: Special Circumstances";
+    ViewData["CurrentStep"] = 7;
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Special circumstances <span class="optional-label">(most people skip this)</span></h1>
+
+    <div class="guidance-box">
+        <p>These adjustments are optional and only apply to unusual situations. If none of these apply to you, just click Next.</p>
+    </div>
+
+    <form method="post" action="/worksheet/step7" novalidate>
+        @Html.AntiForgeryToken()
+
+        <!-- Special Needs -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="HasSpecialNeeds" value="true" class="checkbox-toggle"
+                       data-target="special-needs-fields" @(Model.HasSpecialNeeds ? "checked" : "") />
+                Does your child have ongoing medical, educational, or therapy needs that cost more than normal?
+            </label>
+            <div id="special-needs-fields" class="@(Model.HasSpecialNeeds ? "" : "hidden")">
+                <div class="help-text">Examples: regular physical therapy, special education tutoring, ongoing prescription costs not covered by insurance.</div>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlySpecialNeedsCost" class="form-control"
+                           value="@(Model.MonthlySpecialNeedsCost > 0 ? Model.MonthlySpecialNeedsCost.ToString() : "")"
+                           min="0" step="1" placeholder="Monthly amount" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Tax Exemption -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="HasTaxExemptionDisagreement" value="true" class="checkbox-toggle"
+                       data-target="tax-fields" @(Model.HasTaxExemptionDisagreement ? "checked" : "") />
+                Is there a disagreement about who claims the child(ren) on taxes, or has the court addressed who gets the tax exemption?
+            </label>
+            <div id="tax-fields" class="@(Model.HasTaxExemptionDisagreement ? "" : "hidden")">
+                <div class="help-text">
+                    Claiming a child as a dependent is worth money in tax savings and can affect the amount of child support.
+                    This is called the "head of household" or "dependency exemption" adjustment.
+                    <strong>We recommend consulting a tax professional or attorney for this calculation.</strong>
+                    Enter a positive amount if it should increase support, negative to decrease it.
+                </div>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlyTaxAdjustment" class="form-control"
+                           value="@(Model.MonthlyTaxAdjustment != 0 ? Model.MonthlyTaxAdjustment.ToString() : "")"
+                           step="1" placeholder="Monthly adjustment (+ or -)" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Support Past 18 -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="HasSupportPastMajority" value="true" class="checkbox-toggle"
+                       data-target="past-majority-fields" @(Model.HasSupportPastMajority ? "checked" : "") />
+                Do you have a written agreement that child support will continue after the child turns 18 (e.g., for college)?
+            </label>
+            <div id="past-majority-fields" class="@(Model.HasSupportPastMajority ? "" : "hidden")">
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlySupportPastMajority" class="form-control"
+                           value="@(Model.MonthlySupportPastMajority > 0 ? Model.MonthlySupportPastMajority.ToString() : "")"
+                           min="0" step="1" placeholder="Monthly amount" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Financial Condition -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="HasOverallFinancialConditionAdjustment" value="true" class="checkbox-toggle"
+                       data-target="financial-fields" @(Model.HasOverallFinancialConditionAdjustment ? "checked" : "") />
+                Are there unusual financial circumstances not covered above that you believe should affect child support?
+            </label>
+            <div id="financial-fields" class="@(Model.HasOverallFinancialConditionAdjustment ? "" : "hidden")">
+                <div class="help-text">This is a catch-all category. Describe the situation and enter any monthly dollar adjustment. The court will decide whether to approve it.</div>
+                <textarea name="OverallFinancialConditionDescription" class="form-control" rows="3"
+                          placeholder="Describe the circumstances...">@Model.OverallFinancialConditionDescription</textarea>
+                <div class="input-prefix-wrap mt-2">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlyOverallFinancialAdjustment" class="form-control"
+                           value="@(Model.MonthlyOverallFinancialAdjustment != 0 ? Model.MonthlyOverallFinancialAdjustment.ToString() : "")"
+                           step="1" placeholder="Monthly adjustment (+ or -)" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Social Security Dependent Benefits -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="ChildReceivesSSDependentBenefits" value="true" class="checkbox-toggle"
+                       data-target="ss-fields" @(Model.ChildReceivesSSDependentBenefits ? "checked" : "") />
+                Does the child receive Social Security benefits through the paying parent's account?
+            </label>
+            <div id="ss-fields" class="@(Model.ChildReceivesSSDependentBenefits ? "" : "hidden")">
+                <div class="help-text">This applies when a child receives SSDI dependent benefits tied to the paying parent (for example, because that parent is disabled). This is a credit that reduces the paying parent's obligation.</div>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlySSBenefit" class="form-control"
+                           value="@(Model.MonthlySSBenefit > 0 ? Model.MonthlySSBenefit.ToString() : "")"
+                           min="0" step="1" placeholder="Monthly benefit amount" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Enforcement Fee -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="HasEnforcementFee" value="true" class="checkbox-toggle"
+                       data-target="enforcement-fields" @(Model.HasEnforcementFee ? "checked" : "") />
+                Does your county charge a fee to collect and distribute child support payments through the Kansas Payment Center?
+            </label>
+            <div id="enforcement-fields" class="@(Model.HasEnforcementFee ? "" : "hidden")">
+                <div class="help-text">Not all counties charge this. Check with your local court trustee's office. If unsure, leave at $0. The law splits this fee — the paying parent covers half.</div>
+                <div class="input-prefix-wrap">
+                    <span class="input-prefix">$</span>
+                    <input type="number" name="MonthlyEnforcementFee" class="form-control"
+                           value="@(Model.MonthlyEnforcementFee > 0 ? Model.MonthlyEnforcementFee.ToString() : "")"
+                           min="0" step="1" placeholder="Full monthly fee amount" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Bonus Income -->
+        <div class="form-group toggle-group">
+            <label class="toggle-label">
+                <input type="checkbox" name="EitherParentHasBonusIncome" value="true" class="checkbox-toggle"
+                       data-target="bonus-method-fields" @(Model.EitherParentHasBonusIncome ? "checked" : "") />
+                Does either parent receive irregular bonus income?
+            </label>
+            <div id="bonus-method-fields" class="@(Model.EitherParentHasBonusIncome ? "" : "hidden")">
+                <div class="help-text">Kansas law provides two ways to handle bonus income:
+                    <strong>Averaging method:</strong> Add up all bonuses over the past year and divide by 12 to get a monthly average.
+                    <strong>Percentage method:</strong> A fixed percentage of each bonus is paid as additional child support when bonuses are received.
+                    This note will appear in your PDF for the court to consider.
+                </div>
+                <div class="form-group">
+                    <label>Which method?</label>
+                    <div class="radio-group">
+                        <label class="radio-label">
+                            <input type="radio" name="BonusMethod" value="Averaging"
+                                   @(Model.BonusMethod == "Averaging" ? "checked" : "") />
+                            Averaging (monthly average amount)
+                        </label>
+                        <label class="radio-label">
+                            <input type="radio" name="BonusMethod" value="Percentage"
+                                   @(Model.BonusMethod == "Percentage" ? "checked" : "") />
+                            Percentage of each bonus
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="button-row">
+            <a href="/worksheet/step6" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Calculate &amp; Review &rarr;</button>
+        </div>
+    </form>
+</div>

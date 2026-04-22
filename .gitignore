@@ -1,0 +1,87 @@
+## .NET gitignore
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# MSBuild
+*.user
+*.suo
+
+# Visual Studio
+.vs/
+*.userprefs
+
+# Rider
+.idea/
+
+# ASP.NET scaffolding
+ScaffoldingReadMe.txt
+
+# dotnet tools
+.config/
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+**/[Pp]ackages/
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+*.nuspec
+
+# NuGet v3
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Publish output
+publish/
+/publish
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Runtime
+*.pid
+*.seed
+
+# Runtime data
+pids
+logs
+local_settings.py
+
+# Temporary files
+~$*
+*.tmp
+*.temp
+
+# ASP.NET
+wwwroot/lib/

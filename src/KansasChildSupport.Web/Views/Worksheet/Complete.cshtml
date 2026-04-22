@@ -1,0 +1,73 @@
+@model KansasChildSupport.Web.Models.WorksheetSession
+@{
+    ViewData["Title"] = "Your Worksheet is Ready!";
+    var result = Model.CalculatedResult;
+    var caseInfo = Model.CaseInfo;
+    var p1Name = caseInfo?.Party1Name ?? "Party 1";
+    var p2Name = caseInfo?.Party2Name ?? "Party 2";
+    bool p1IsPrimary = caseInfo?.PrimaryCustody != "Party2";
+    var nonPrimaryName = p1IsPrimary ? p2Name : p1Name;
+    var primaryName = p1IsPrimary ? p1Name : p2Name;
+}
+
+<div class="wizard-step complete-page">
+    <div class="success-header">
+        <div class="success-icon" aria-hidden="true">&#10003;</div>
+        <h1>Your worksheet is ready!</h1>
+    </div>
+
+    @if (result != null)
+    {
+        <div class="result-box">
+            <h2>Total Monthly Child Support</h2>
+            <div class="result-amount">@result.N.ToString("C0")/month</div>
+            <p><strong>@nonPrimaryName</strong> pays <strong>@primaryName</strong></p>
+        </div>
+    }
+
+    <div class="download-section">
+        <a href="/pdf/generate" class="btn btn-primary btn-large">
+            &#128196; Download PDF Worksheet
+        </a>
+        <p class="hint-text">Save this PDF. You'll need to print, sign, and file it with the court.</p>
+    </div>
+
+    <div class="next-steps">
+        <h2>What do I do next?</h2>
+        <ol>
+            <li><strong>Print or save your PDF.</strong> Keep a copy for your own records.</li>
+            <li><strong>Sign and date</strong> where indicated on Page 3 of the worksheet.</li>
+            <li>
+                <strong>Complete a Domestic Relations Affidavit.</strong>
+                You'll also need this form. Find it at:
+                <a href="https://kscourts.org/Kansas-Courts/Self-Help" target="_blank" rel="noopener">kscourts.org — Self-Help</a>
+            </li>
+            <li><strong>File both documents</strong> with the clerk of the district court in <strong>@(caseInfo?.County ?? "your") County</strong>.</li>
+            <li><strong>Serve a copy</strong> on the other parent according to court rules.</li>
+            <li><strong>Keep a copy</strong> for yourself.</li>
+        </ol>
+    </div>
+
+    <div class="resources-box">
+        <h2>Kansas Courts Resources</h2>
+        <ul>
+            <li><a href="https://kscourts.org/Kansas-Courts/Self-Help" target="_blank" rel="noopener">Kansas Courts Self-Help Center</a></li>
+            <li><a href="https://kansaslegalservices.org" target="_blank" rel="noopener">Kansas Legal Services</a> — 1-800-723-6953</li>
+            <li>Kansas Bar Association Lawyer Referral — (785) 234-5696</li>
+        </ul>
+    </div>
+
+    <div class="legal-notices">
+        <p>This tool is for informational purposes only and does not constitute legal advice. Results represent the rebuttable presumptive amount under Kansas Child Support Guidelines (effective July 1, 2025) and may be adjusted by a court. Always consult a licensed Kansas attorney if you have questions about your specific situation.</p>
+    </div>
+
+    <div class="button-row">
+        <a href="/pdf/generate" class="btn btn-primary">&#128196; Download PDF Again</a>
+        <a href="/worksheet/step8" class="btn btn-back">&#8592; Back to Review</a>
+        <form method="post" action="/worksheet/startover" style="display:inline"
+              onsubmit="return confirm('Start a new worksheet? This will clear all entered information.')">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-secondary">Start a New Worksheet</button>
+        </form>
+    </div>
+</div>

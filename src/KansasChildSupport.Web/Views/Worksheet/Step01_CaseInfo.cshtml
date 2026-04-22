@@ -1,0 +1,100 @@
+@model KansasChildSupport.Web.Models.Steps.Step01_CaseInfoModel
+@{
+    ViewData["Title"] = "Step 1: Case Information";
+    ViewData["CurrentStep"] = 1;
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    @if (ViewBag.ExpiredMessage != null)
+    {
+        <div class="alert alert-warning" role="alert">
+            <strong>Session Expired:</strong> @ViewBag.ExpiredMessage
+        </div>
+    }
+
+    <h1 class="step-heading">Let's start with the basics</h1>
+
+    <div class="guidance-box">
+        <p>Child support is the money one parent pays the other to help cover the costs of raising your child.
+        This form will walk you through calculating that amount using Kansas law. It takes about 10–15 minutes.
+        Have your recent pay stubs or tax returns ready.</p>
+    </div>
+
+    <form method="post" action="/worksheet/step1" novalidate>
+        @Html.AntiForgeryToken()
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary" role="alert">
+                <strong>Please fix the following:</strong>
+                <ul>
+                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+                    {
+                        <li>@error.ErrorMessage</li>
+                    }
+                </ul>
+            </div>
+        }
+
+        <div class="form-group">
+            <label for="CaseNumber">Case Number <span class="optional-label">(optional)</span></label>
+            <div class="help-text">This is on any court papers you've already received. Leave blank if you don't have one yet.</div>
+            <input type="text" id="CaseNumber" name="CaseNumber" class="form-control" value="@Model.CaseNumber" autocomplete="off" />
+        </div>
+
+        <div class="form-group">
+            <label for="Party1Name">Your Name <span class="required-label" aria-label="required">*</span></label>
+            <div class="help-text">The person filling out this form (Party 1).</div>
+            <input type="text" id="Party1Name" name="Party1Name" class="form-control" value="@Model.Party1Name"
+                   required aria-required="true" autocomplete="name" />
+            <span asp-validation-for="Party1Name" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="Party2Name">Other Parent's Name <span class="required-label" aria-label="required">*</span></label>
+            <div class="help-text">The other parent in this case (Party 2).</div>
+            <input type="text" id="Party2Name" name="Party2Name" class="form-control" value="@Model.Party2Name"
+                   required aria-required="true" />
+            <span asp-validation-for="Party2Name" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <label for="County">County <span class="required-label" aria-label="required">*</span></label>
+            <div class="help-text">Select the Kansas county where the court case will be filed.</div>
+            <select id="County" name="County" class="form-control" required aria-required="true">
+                <option value="">-- Select County --</option>
+                @foreach (var county in KansasChildSupport.Web.Models.Steps.Step01_CaseInfoModel.KansasCounties)
+                {
+                    <option value="@county" selected="@(Model.County == county ? "selected" : null)">@county</option>
+                }
+            </select>
+            <span asp-validation-for="County" class="field-error"></span>
+        </div>
+
+        <div class="form-group">
+            <fieldset>
+                <legend>Who has primary custody? <span class="required-label" aria-label="required">*</span></legend>
+                <div class="help-text">Primary custody means the children live mostly with this parent.</div>
+                <div class="radio-group">
+                    <label class="radio-label">
+                        <input type="radio" name="PrimaryCustody" value="Party1"
+                               @(Model.PrimaryCustody == "Party1" || string.IsNullOrEmpty(Model.PrimaryCustody) ? "checked" : "") />
+                        <span>I do (I have primary custody — the children live mostly with me)</span>
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="PrimaryCustody" value="Party2"
+                               @(Model.PrimaryCustody == "Party2" ? "checked" : "") />
+                        <span>The other parent does (they have primary custody)</span>
+                    </label>
+                </div>
+                <span asp-validation-for="PrimaryCustody" class="field-error"></span>
+            </fieldset>
+        </div>
+
+        <div class="button-row">
+            <button type="submit" class="btn btn-primary">Next: Children &rarr;</button>
+        </div>
+    </form>
+</div>

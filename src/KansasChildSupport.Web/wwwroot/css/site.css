@@ -1,0 +1,532 @@
+/* ============================================
+   Kansas Child Support Worksheet — site.css
+   Mobile-first, high contrast, plain language
+   ============================================ */
+
+/* --- Reset & Base --- */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; }
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #f9f9f9;
+    color: #1a1a1a;
+    line-height: 1.6;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* --- Typography --- */
+h1 { font-size: 1.6rem; margin-bottom: 0.75rem; color: #003366; }
+h2 { font-size: 1.2rem; margin-bottom: 0.5rem; color: #003366; }
+h3 { font-size: 1rem; margin-bottom: 0.5rem; color: #1a1a1a; }
+p { margin-bottom: 0.75rem; }
+a { color: #0066cc; text-decoration: underline; }
+a:hover { color: #003d7a; }
+a:focus { outline: 3px solid #ff9900; outline-offset: 2px; }
+ul, ol { margin-left: 1.5rem; margin-bottom: 0.5rem; }
+
+/* --- Header --- */
+.site-header {
+    background: #003366;
+    color: #fff;
+    padding: 1rem;
+}
+.header-inner { max-width: 900px; margin: 0 auto; }
+.site-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fff;
+    text-decoration: none;
+    display: block;
+}
+.site-title:hover { color: #ffd700; }
+.header-subtitle { font-size: 0.78rem; opacity: 0.85; }
+
+/* --- Main content --- */
+.site-main { flex: 1; max-width: 900px; width: 100%; margin: 0 auto; padding: 1rem; }
+
+/* --- Footer --- */
+.site-footer {
+    background: #f0f0f0;
+    border-top: 2px solid #ccc;
+    padding: 1rem;
+    font-size: 0.78rem;
+    color: #444;
+    margin-top: auto;
+}
+.footer-inner { max-width: 900px; margin: 0 auto; }
+.disclaimer { margin-bottom: 0.5rem; }
+.legal-aid { color: #333; }
+
+/* --- Step Progress Bar --- */
+.step-progress { margin-bottom: 1.5rem; padding: 0.5rem 0; }
+.step-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    list-style: none;
+    margin-bottom: 0.5rem;
+    margin-left: 0;
+}
+.step-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.72rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+.step-item.step-done {
+    background: #d4edda;
+    border-color: #28a745;
+    color: #155724;
+}
+.step-item.step-current {
+    background: #003366;
+    border-color: #003366;
+    color: #fff;
+    font-weight: 700;
+}
+.step-item.step-future { background: #fff; color: #666; }
+.step-indicator {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+.step-current .step-indicator { background: rgba(255,255,255,0.25); }
+.step-done .step-indicator { background: #28a745; color: #fff; }
+.step-progress-bar {
+    height: 6px;
+    background: #ccc;
+    border-radius: 3px;
+    overflow: hidden;
+}
+.step-progress-fill {
+    height: 100%;
+    background: #003366;
+    transition: width 0.3s ease;
+}
+
+/* --- Wizard Step Container --- */
+.wizard-step { max-width: 800px; margin: 0 auto; }
+.step-heading {
+    font-size: 1.5rem;
+    color: #003366;
+    margin-bottom: 1rem;
+    border-bottom: 3px solid #003366;
+    padding-bottom: 0.5rem;
+}
+.section-heading {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #003366;
+    background: #e8f0fb;
+    padding: 0.4rem 0.75rem;
+    border-left: 4px solid #003366;
+    margin: 1.5rem 0 0.75rem;
+}
+
+/* --- Guidance / Info Boxes --- */
+.guidance-box {
+    background: #e8f0fb;
+    border-left: 4px solid #0066cc;
+    padding: 1rem;
+    border-radius: 0 4px 4px 0;
+    margin-bottom: 1.5rem;
+}
+.guidance-box p:last-child { margin-bottom: 0; }
+
+.info-box {
+    background: #fff3cd;
+    border-left: 4px solid #ff9900;
+    padding: 0.75rem 1rem;
+    border-radius: 0 4px 4px 0;
+    margin: 0.5rem 0;
+}
+
+.help-text {
+    font-size: 0.85rem;
+    color: #444;
+    background: #f0f4ff;
+    padding: 0.4rem 0.6rem;
+    border-radius: 4px;
+    margin: 0.25rem 0 0.5rem;
+}
+
+/* --- Forms --- */
+.form-group {
+    margin-bottom: 1.25rem;
+}
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+}
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+    border: 2px solid #999;
+    border-radius: 4px;
+    background: #fff;
+    color: #1a1a1a;
+    transition: border-color 0.2s;
+}
+.form-control:focus {
+    outline: 3px solid #ff9900;
+    outline-offset: 0;
+    border-color: #003366;
+}
+select.form-control { appearance: auto; }
+textarea.form-control { resize: vertical; }
+
+/* Dollar/Percent inputs */
+.input-prefix-wrap {
+    display: flex;
+    align-items: center;
+    max-width: 220px;
+}
+.input-prefix, .input-suffix {
+    background: #e0e0e0;
+    padding: 0.6rem 0.7rem;
+    border: 2px solid #999;
+    font-weight: 700;
+    font-size: 1rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.input-prefix { border-right: none; border-radius: 4px 0 0 4px; }
+.input-suffix { border-left: none; border-radius: 0 4px 4px 0; }
+.input-prefix-wrap .form-control { border-radius: 0; flex: 1; }
+.input-prefix-wrap .input-prefix + .form-control { border-radius: 0 4px 4px 0; }
+
+/* --- Radio / Checkbox --- */
+.radio-group { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.25rem; }
+.radio-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    min-height: 44px;
+}
+.radio-label:hover { background: #f0f4ff; border-color: #0066cc; }
+.radio-label input[type="radio"],
+.radio-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+.toggle-group { margin-bottom: 0.5rem; }
+.toggle-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.4rem 0;
+}
+.toggle-label input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+fieldset { border: none; padding: 0; }
+legend { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.4rem; }
+
+/* --- Buttons --- */
+.btn {
+    display: inline-block;
+    padding: 0.65rem 1.4rem;
+    font-size: 1rem;
+    font-weight: 600;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    text-decoration: none;
+    min-height: 44px;
+    transition: background 0.15s, border-color 0.15s;
+    text-align: center;
+    line-height: 1.4;
+}
+.btn:focus { outline: 3px solid #ff9900; outline-offset: 2px; }
+.btn-primary { background: #003366; color: #fff; border-color: #003366; }
+.btn-primary:hover { background: #00254d; border-color: #00254d; color: #fff; }
+.btn-secondary { background: #fff; color: #003366; border-color: #003366; }
+.btn-secondary:hover { background: #e8f0fb; }
+.btn-back { background: #f0f0f0; color: #333; border-color: #aaa; }
+.btn-back:hover { background: #e0e0e0; color: #1a1a1a; }
+.btn-danger { background: #c62828; color: #fff; border-color: #c62828; }
+.btn-danger:hover { background: #8d1e1e; }
+.btn-large { font-size: 1.1rem; padding: 0.8rem 2rem; }
+.btn-link { background: none; border: none; color: #c62828; cursor: pointer; text-decoration: underline; padding: 0; font-size: 0.85rem; }
+.button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ccc;
+}
+.action-row { justify-content: flex-start; }
+
+/* --- Validation --- */
+.validation-summary {
+    background: #fce4e4;
+    border: 2px solid #e53935;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+.validation-summary ul { margin-left: 1.5rem; }
+.field-error { color: #c62828; font-size: 0.85rem; display: block; margin-top: 0.2rem; }
+.alert {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    border: 2px solid transparent;
+}
+.alert-warning { background: #fff3cd; border-color: #ff9900; color: #5d4037; }
+.alert-error { background: #fce4e4; border-color: #e53935; color: #c62828; }
+
+/* --- Hidden / Toggle --- */
+.hidden { display: none !important; }
+
+/* --- Children section --- */
+.card {
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+}
+.card-header {
+    background: #e8f0fb;
+    padding: 0.5rem 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 700;
+}
+.card-body { padding: 0.75rem; }
+.child-number { font-weight: 700; }
+.age-display { margin-top: 0.25rem; }
+.age-badge {
+    display: inline-block;
+    background: #003366;
+    color: #fff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+}
+.add-child-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.hint-text { font-size: 0.82rem; color: #555; }
+
+/* --- Two-column layout --- */
+.two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+@media (min-width: 600px) {
+    .two-col-grid { grid-template-columns: 1fr 1fr; }
+}
+.col-card {
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    padding: 0.75rem;
+    background: #fff;
+}
+.col-card h3 {
+    color: #003366;
+    border-bottom: 2px solid #003366;
+    padding-bottom: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+/* --- Running total --- */
+.running-total {
+    background: #e8f0fb;
+    border: 2px solid #0066cc;
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+}
+.income-total { font-size: 1.2rem; font-weight: 700; color: #003366; }
+
+/* --- Review page --- */
+.result-box {
+    background: #003366;
+    color: #fff;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+.result-box h2 { color: #ffd700; margin-bottom: 0.5rem; }
+.result-amount { font-size: 3rem; font-weight: 900; color: #ffd700; margin: 0.25rem 0; }
+.result-box p { margin: 0; font-size: 1.1rem; }
+.result-box .alert { margin-top: 1rem; text-align: left; }
+
+.calc-details {
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+}
+.calc-details summary {
+    background: #e8f0fb;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    user-select: none;
+}
+.calc-details summary:hover { background: #d0e0f8; }
+.calc-table-wrap { overflow-x: auto; }
+.calc-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+.calc-table th, .calc-table td {
+    border: 1px solid #ccc;
+    padding: 0.35rem 0.5rem;
+    text-align: left;
+}
+.calc-table th { background: #003366; color: #fff; }
+.calc-table .section-row td {
+    background: #e8f0fb;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.calc-table .highlight-row td { background: #fff9c4; font-weight: 700; }
+.calc-table .total-row td { background: #003366; color: #ffd700; font-size: 1rem; }
+.calc-table .center { text-align: center; }
+
+.review-summary { margin-bottom: 1.5rem; }
+.review-section {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    background: #fff;
+}
+.review-section h3 {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 0.25rem;
+}
+.edit-link { font-size: 0.85rem; font-weight: 400; }
+dl { display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.75rem; }
+dt { font-weight: 600; color: #444; }
+dd { margin: 0; }
+
+.notes-box {
+    background: #fff3cd;
+    border: 2px solid #ff9900;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.notes-box h3 { color: #5d4037; margin-bottom: 0.5rem; }
+.notes-box ul { margin-left: 1.5rem; }
+
+.legal-notices {
+    background: #f0f0f0;
+    border-radius: 6px;
+    padding: 1rem;
+    margin: 1.5rem 0;
+    font-size: 0.85rem;
+    color: #333;
+}
+.legal-notices ul { margin-left: 1.5rem; margin-top: 0.25rem; }
+
+/* --- Complete page --- */
+.complete-page { text-align: center; }
+.success-header { margin-bottom: 1.5rem; }
+.success-icon {
+    font-size: 3rem;
+    color: #28a745;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+.complete-page .result-box { max-width: 400px; margin: 0 auto 1.5rem; }
+.download-section { margin: 1.5rem 0; }
+.next-steps {
+    text-align: left;
+    background: #fff;
+    border: 2px solid #ccc;
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+}
+.next-steps ol { margin-left: 1.5rem; }
+.next-steps li { margin-bottom: 0.5rem; }
+.resources-box {
+    text-align: left;
+    background: #e8f0fb;
+    border-radius: 6px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.resources-box ul { margin-left: 1.5rem; }
+
+/* --- Optional label --- */
+.optional-label { font-size: 0.8rem; font-weight: 400; color: #666; }
+.required-label { color: #c62828; font-weight: 700; }
+
+/* --- Misc --- */
+.income-section { margin-top: 0.5rem; }
+.mt-2 { margin-top: 0.5rem; }
+details summary { cursor: pointer; }
+details summary:focus { outline: 3px solid #ff9900; }
+
+/* --- High Contrast Mode --- */
+@media (prefers-contrast: high) {
+    .form-control { border-color: #000; }
+    .btn-primary { background: #000; color: #ff0; border-color: #000; }
+    .step-item.step-current { background: #000; }
+    .guidance-box { border-left-color: #000; background: #ffffcc; }
+}
+
+/* --- Responsive --- */
+@media (min-width: 600px) {
+    .radio-group { flex-direction: row; flex-wrap: wrap; }
+}
+
+@media (max-width: 400px) {
+    html { font-size: 16px; }
+    .result-amount { font-size: 2.2rem; }
+    .step-list { gap: 2px; }
+    .step-item { font-size: 0.65rem; padding: 3px 5px; }
+}

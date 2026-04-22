@@ -1,0 +1,27 @@
+@model KansasChildSupport.Web.Models.Steps.Step03_Parent1IncomeModel
+@{
+    ViewData["Title"] = "Step 3: Your Income";
+    ViewData["CurrentStep"] = 3;
+    string parentName = ViewBag.ParentName ?? "Party 1";
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Your income (@parentName)</h1>
+
+    <div class="guidance-box">
+        <p>We need to calculate your total monthly income for child support purposes. This is called your "Child Support Income." It includes most types of income but not government assistance.</p>
+    </div>
+
+    <form method="post" action="/worksheet/step3" novalidate>
+        @Html.AntiForgeryToken()
+
+        @await Html.PartialAsync("_IncomeFields", Model)
+
+        <div class="button-row">
+            <a href="/worksheet/step2" class="btn btn-back">&larr; Back</a>
+            <button type="submit" class="btn btn-primary">Next: Other Parent's Income &rarr;</button>
+        </div>
+    </form>
+</div>

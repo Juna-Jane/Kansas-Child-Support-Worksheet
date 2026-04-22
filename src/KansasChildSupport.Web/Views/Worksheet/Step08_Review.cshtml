@@ -1,0 +1,166 @@
+@model KansasChildSupport.Web.Models.WorksheetSession
+@{
+    ViewData["Title"] = "Step 8: Review Your Information";
+    ViewData["CurrentStep"] = 8;
+    var result = Model.CalculatedResult;
+    var caseInfo = Model.CaseInfo;
+    var p1Name = caseInfo?.Party1Name ?? "Party 1";
+    var p2Name = caseInfo?.Party2Name ?? "Party 2";
+    bool p1IsPrimary = caseInfo?.PrimaryCustody != "Party2";
+    var primaryName = p1IsPrimary ? p1Name : p2Name;
+    var nonPrimaryName = p1IsPrimary ? p2Name : p1Name;
+}
+
+@await Html.PartialAsync("_StepProgress")
+
+<div class="wizard-step">
+    <h1 class="step-heading">Review your information</h1>
+
+    @if (TempData["PdfError"] != null)
+    {
+        <div class="alert alert-error" role="alert">@TempData["PdfError"]</div>
+    }
+
+    @if (result != null)
+    {
+        <!-- Main Result Box -->
+        <div class="result-box" role="region" aria-label="Calculation result">
+            <h2>Estimated Monthly Child Support</h2>
+            <div class="result-amount">@result.N.ToString("C0")</div>
+            <p>Based on what you entered, <strong>@nonPrimaryName</strong> would pay <strong>@result.N.ToString("C0")</strong> to <strong>@primaryName</strong> each month.</p>
+
+            @if (result.AbilityToPayFlag)
+            {
+                <div class="alert alert-warning">
+                    <strong>Note:</strong> The calculated amount may exceed what @nonPrimaryName can reasonably pay after covering their own basic needs. The court will need to consider their ability to pay (Section VI.G of the Guidelines).
+                </div>
+            }
+        </div>
+
+        <!-- Calculation Summary (collapsible) -->
+        <details class="calc-details">
+            <summary>See full calculation breakdown</summary>
+            <div class="calc-table-wrap">
+                <table class="calc-table">
+                    <thead>
+                        <tr><th>Line</th><th>Description</th><th>@p1Name</th><th>@p2Name</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr class="section-row"><td colspan="4">Section A — Gross Employment Income</td></tr>
+                        <tr><td>A.1</td><td>Domestic Gross Income (wages/other)</td><td>@result.P1_A1.ToString("C0")</td><td>@result.P2_A1.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section B — Self-Employment</td></tr>
+                        <tr><td>B.1</td><td>Self-Employment Gross</td><td>@result.P1_B1.ToString("C0")</td><td>@result.P2_B1.ToString("C0")</td></tr>
+                        <tr><td>B.2</td><td>Business Expenses (–)</td><td>(@result.P1_B2.ToString("C0"))</td><td>(@result.P2_B2.ToString("C0"))</td></tr>
+                        <tr><td>B.3</td><td>Net Self-Employment</td><td>@result.P1_B3.ToString("C0")</td><td>@result.P2_B3.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section C — Adjustments</td></tr>
+                        <tr><td>C.1</td><td>Total Domestic Gross (A.1 + B.3)</td><td>@result.P1_C1.ToString("C0")</td><td>@result.P2_C1.ToString("C0")</td></tr>
+                        <tr><td>C.2</td><td>Child Support Paid (other cases) (–)</td><td>(@result.P1_C2.ToString("C0"))</td><td>(@result.P2_C2.ToString("C0"))</td></tr>
+                        <tr><td>C.3</td><td>Maintenance Paid (–)</td><td>(@result.P1_C3.ToString("C0"))</td><td>(@result.P2_C3.ToString("C0"))</td></tr>
+                        <tr><td>C.4</td><td>Maintenance Received (+)</td><td>@result.P1_C4.ToString("C0")</td><td>@result.P2_C4.ToString("C0")</td></tr>
+                        <tr class="highlight-row"><td>C.5</td><td>Child Support Income</td><td>@result.P1_C5.ToString("C0")</td><td>@result.P2_C5.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section D — Computation</td></tr>
+                        <tr><td>D.1</td><td>Child Support Income</td><td>@result.P1_D1.ToString("C0")</td><td>@result.P2_D1.ToString("C0")</td></tr>
+                        <tr><td>D.2</td><td>Combined Income</td><td colspan="2" class="center">@result.D2.ToString("C0")</td></tr>
+                        <tr><td>D.3</td><td>Proportionate Share</td><td>@((result.P1_D3 * 100).ToString("F1"))%</td><td>@((result.P2_D3 * 100).ToString("F1"))%</td></tr>
+                        <tr><td>D.4</td><td>Gross Child Support Obligation (from schedule) @(result.ExtendedFormulaUsed ? "[Extended Formula]" : "")</td><td colspan="2" class="center">@result.D4.ToString("C0")</td></tr>
+                        <tr><td>D.5</td><td>Proportionate Share of Gross CSO</td><td>@result.P1_D5.ToString("C0")</td><td>@result.P2_D5.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section E — Parenting Time Adjustment</td></tr>
+                        <tr><td>E.4</td><td>Total Parenting Time Adjustment (applied to @nonPrimaryName)</td><td colspan="2" class="center">@result.E4.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section F — Health Insurance</td></tr>
+                        <tr><td>F.1</td><td>Insurance Premium (children only)</td><td>@result.P1_F1.ToString("C0")</td><td>@result.P2_F1.ToString("C0")</td></tr>
+                        <tr><td>F.2</td><td>Proportionate Share of Insurance</td><td>@result.P1_F2.ToString("C0")</td><td>@result.P2_F2.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section G — Child Care</td></tr>
+                        <tr><td>G.1</td><td>Net Child Care (after tax credit)</td><td>@result.P1_G1.ToString("C0")</td><td>@result.P2_G1.ToString("C0")</td></tr>
+                        <tr><td>G.2</td><td>Proportionate Share of Child Care</td><td>@result.P1_G2.ToString("C0")</td><td>@result.P2_G2.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section H — Proportionate CSO</td></tr>
+                        <tr><td>H.1</td><td>Proportionate CSO</td><td>@result.P1_H1.ToString("C0")</td><td>@result.P2_H1.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Section I — Basic CSO</td></tr>
+                        <tr><td>I.1</td><td>Credits (insurance + child care paid)</td><td>@result.P1_I1.ToString("C0")</td><td>@result.P2_I1.ToString("C0")</td></tr>
+                        <tr class="highlight-row"><td>I.2</td><td>Basic Child Support Obligation</td><td>@result.P1_I2.ToString("C0")</td><td>@result.P2_I2.ToString("C0")</td></tr>
+                        <tr class="section-row"><td colspan="4">Sections J, K, L, M</td></tr>
+                        <tr><td>J.6</td><td>Total Adjustments</td><td colspan="2" class="center">@result.J6.ToString("C0")</td></tr>
+                        <tr><td>K.3</td><td>Adjusted Obligation (K.1 + K.2)</td><td colspan="2" class="center">@result.K3.ToString("C0")</td></tr>
+                        <tr><td>K.4</td><td>SS Dependent Benefit Credit (–)</td><td colspan="2" class="center">@result.K4.ToString("C0")</td></tr>
+                        <tr><td>L</td><td>Net Parental Obligation (K.3 – K.4)</td><td colspan="2" class="center">@result.L.ToString("C0")</td></tr>
+                        <tr><td>M</td><td>Enforcement Fee (50%)</td><td colspan="2" class="center">@result.M.ToString("C0")</td></tr>
+                        <tr class="highlight-row total-row"><td>N</td><td><strong>TOTAL CHILD SUPPORT ORDER</strong></td><td colspan="2" class="center"><strong>@result.N.ToString("C0")</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </details>
+
+        @if (result.Notes.Count > 0)
+        {
+            <div class="notes-box">
+                <h3>Important Notes</h3>
+                <ul>
+                    @foreach (var note in result.Notes)
+                    {
+                        <li>@note</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+
+    <!-- Summary of entered data -->
+    <div class="review-summary">
+        <h2>Your Entered Information</h2>
+
+        <div class="review-section">
+            <h3>Case Information <a href="/worksheet/step1" class="edit-link">Edit</a></h3>
+            @if (caseInfo != null)
+            {
+                <dl>
+                    <dt>Your Name:</dt><dd>@caseInfo.Party1Name</dd>
+                    <dt>Other Parent:</dt><dd>@caseInfo.Party2Name</dd>
+                    <dt>County:</dt><dd>@caseInfo.County</dd>
+                    <dt>Primary Custody:</dt><dd>@(p1IsPrimary ? $"{caseInfo.Party1Name} (you)" : caseInfo.Party2Name)</dd>
+                    @if (!string.IsNullOrEmpty(caseInfo.CaseNumber))
+                    {
+                        <dt>Case Number:</dt><dd>@caseInfo.CaseNumber</dd>
+                    }
+                </dl>
+            }
+        </div>
+
+        <div class="review-section">
+            <h3>Children <a href="/worksheet/step2" class="edit-link">Edit</a></h3>
+            @if (Model.Children?.Children != null)
+            {
+                <ul>
+                    @foreach (var child in Model.Children.Children)
+                    {
+                        <li>@child.FirstName — @child.GetAgeGroupDisplay()</li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+
+    <!-- Important notices -->
+    <div class="legal-notices">
+        <p><strong>"Rebuttable Presumptive Amount":</strong> This amount is what Kansas law calls the 'rebuttable presumptive amount.' A judge can change it if they find a good reason.</p>
+        <p>This worksheet is a calculation tool. It does not give legal advice. If your situation is complicated, talk to a lawyer or legal aid.</p>
+        <p><strong>Free legal help:</strong></p>
+        <ul>
+            <li>Kansas Legal Services: <a href="https://kansaslegalservices.org" target="_blank" rel="noopener">kansaslegalservices.org</a> / 1-800-723-6953</li>
+            <li>Kansas Bar Association Lawyer Referral: (785) 234-5696</li>
+        </ul>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="button-row action-row">
+        <form method="post" action="/pdf/generate" style="display:inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary btn-large">
+                &#128196; Generate My Worksheet PDF
+            </button>
+        </form>
+        <a href="/worksheet/step7" class="btn btn-back">&#8592; Go Back and Edit</a>
+        <form method="post" action="/worksheet/startover" style="display:inline" onsubmit="return confirm('Are you sure you want to start over? All your information will be cleared.')">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger">&#128260; Start Over</button>
+        </form>
+    </div>
+</div>
